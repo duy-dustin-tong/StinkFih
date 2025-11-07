@@ -278,25 +278,23 @@ void Board::MakeMove(const string& move){
         }
     }
     
-    // 2. If Rook moved or captured (checking both 'from' and 'to' squares against rook start positions)
-    bool checkRookFrom = Piece::Type(moved_piece) == Piece::Rook;
-    bool checkRookTo = Piece::Type(captured_piece) == Piece::Rook;
+    // F. Revoke Castling Rights (Revised Logic)
 
-    if (checkRookFrom || checkRookTo) {
-        // White Rook original positions (a1/h1 -> rank 7)
-        if (fromRank == 7 || toRank == 7) {
-            // Check file 0 (a-file, Queen side)
-            if (fromFile == 0 || toFile == 0) whiteCastleQueenSide = false; 
-            // Check file 7 (h-file, King side)
-            if (fromFile == 7 || toFile == 7) whiteCastleKingSide = false;  
-        }
-        // Black Rook original positions (a8/h8 -> rank 0)
-        if (fromRank == 0 || toRank == 0) {
-            // Check file 0 (a-file, Queen side)
-            if (fromFile == 0 || toFile == 0) blackCastleQueenSide = false; 
-            // Check file 7 (h-file, King side)
-            if (fromFile == 7 || toFile == 7) blackCastleKingSide = false;  
-        }
+    // Check if the move involved the White Queenside Rook square (a1)
+    if (fromIndex == 56 || toIndex == 56) {
+        whiteCastleQueenSide = false;
+    }
+    // Check if the move involved the White Kingside Rook square (h1)
+    if (fromIndex == 63 || toIndex == 63) {
+        whiteCastleKingSide = false;
+    }
+    // Check if the move involved the Black Queenside Rook square (a8)
+    if (fromIndex == 0 || toIndex == 0) {
+        blackCastleQueenSide = false;
+    }
+    // Check if the move involved the Black Kingside Rook square (h8)
+    if (fromIndex == 7 || toIndex == 7) {
+        blackCastleKingSide = false;
     }
     
     // G. Switch turn
@@ -476,4 +474,49 @@ bool Board::IsKingSafe(){
     int kingPos = isWhiteTurn? kingSquare.second : kingSquare.first;
     pair<int,int> square = IndexToCoord(kingPos);
     return !IsSquareAttacked(square, isWhiteTurn);
+}
+
+string Board::ExportFEN(){
+    string res = "";
+    int cnt = 0;
+    for(int i = 0;i<8;i++){
+        for(int j = 0;j<8;j++){
+            int piece = board[i][j];
+            char c = '!';
+            switch(Piece::Type(piece)){
+                case Piece::None: cnt++; break;
+                case Piece::Queen: c = 'q'; break;
+                case Piece::King: c = 'k'; break;
+                case Piece::Rook: c = 'r'; break;
+                case Piece::Bishop: c = 'b'; break;
+                case Piece::Knight: c = 'n'; break;
+                case Piece::Pawn: c = 'p'; break;
+            }
+
+            if(Piece::Color(piece) == Piece::White) c-=32; //toUpper
+
+            if(piece!=Piece::None){
+                if(cnt) res+=(char)(cnt+'0');
+                cnt = 0;
+                res+=c;
+            }
+        }
+        if(cnt) res+=(char)(cnt+'0');
+        cnt = 0;
+        if(i!=7) res+='/';
+    }
+    res+=' ';
+    res+= isWhiteTurn? 'w' : 'b';
+    res+=' ';
+    if(whiteCastleKingSide) res+='K';
+    if(whiteCastleQueenSide) res+='Q';
+    if(blackCastleKingSide) res+='k';
+    if(blackCastleQueenSide) res+='q';
+
+    if(res[res.size()-1] == ' ') res+='-';
+    res+=' ';
+
+    
+    res+=FormatSquare(enPassantTarget);
+    return res;
 }

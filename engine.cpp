@@ -36,17 +36,17 @@ void handle_opponent_move(const string& opponent_move, Board& board) {
 int main() {
     string line = "black";
     
-    getline(cin,line);
+    // getline(cin,line);
 
-    board.InitBoard(board.startingFEN, line == "white");
+    // board.InitBoard(board.startingFEN, line == "white");
 
     // The persistent loop: The C++ engine waits for a command from Python
-    while (getline(cin, line)) {
+    // while (getline(cin, line)) {
         
-        handle_opponent_move(line, board);
+    //     handle_opponent_move(line, board);
 
         
-    }
+    // }
 
 
 
@@ -56,10 +56,12 @@ int main() {
     // while(cnt--){
     //     cin>>abc;
     //     board.MakeMove(abc);
+    //     board.PrintBoard();
+    //     cout<<board.ExportFEN()<<endl;
     // }
-
-    // vector<string> v = MoveGenerator::LegalMoves(board);
-    // for(string x : v) cout<<x<<' ';
+    board.InitBoard("r3k2r/p1pNqpb1/bn2pnp1/3P4/1p2P3/2N2Q1p/PPPBBPPP/R3K2R b KQkq - 0 1", 0);
+    vector<string> v = MoveGenerator::LegalMoves(board);
+    for(string x : v) cout<<x<<' ';
 
     return 0; // Clean exit
 }

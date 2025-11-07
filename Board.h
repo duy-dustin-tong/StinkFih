@@ -11,7 +11,7 @@ using namespace std;
 class Board{
 public:
     // Starting FEN constant
-    const string startingFEN = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"; 
+    const string startingFEN = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq -"; 
     static const char fileID[8];
     static const char rankID[8];
 
@@ -65,18 +65,17 @@ public:
         return 0<=x.first && x.first<8 && 0<=x.second && x.second<8;
     }
 
-    static string FormatMove(pair<int,int> fr, pair<int,int> to){
-        int x = fr.first;
-        int y = fr.second;
-        int u = to.first;
-        int v = to.second;
+    static string FormatSquare(int square){
+        int x = square/8;
+        int y = square%8;
         string res = "";
         res+=fileID[y];
         res+=rankID[x];
-        res+=fileID[v];
-        res+=rankID[u];
-        
         return res;
+    }
+
+    static string FormatMove(pair<int,int> fr, pair<int,int> to){
+        return FormatSquare(CoordToIndex(fr))+FormatSquare(CoordToIndex(to));
     }
 
 
@@ -87,5 +86,6 @@ public:
     void PrintBoard();
     bool IsSquareAttacked(pair<int,int> square, bool byWhite);
     bool IsKingSafe();
+    string ExportFEN();
 
 };

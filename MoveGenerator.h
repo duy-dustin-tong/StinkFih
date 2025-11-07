@@ -161,7 +161,8 @@ public:
                     //handle EP
                     int EP = board.enPassantTarget;
                     if(EP != -1) for(y = j-1; y<=j+1; y+=2){
-                        if(EP != Board::CoordToIndex(make_pair(x,y))) continue;
+                        pair<int,int> to = make_pair(x,y);
+                        if(!Board::InsideBoard(to) || EP != Board::CoordToIndex(to)) continue;
                         generatedMoves.push_back(Board::FormatMove(fromCoord, make_pair(x,y)));
                     }
                 }
@@ -188,7 +189,6 @@ public:
                 board.board[7][1] == Piece::None &&
                 board.board[7][2] == Piece::None &&
                 board.board[7][3] == Piece::None &&
-                !board.IsSquareAttacked(make_pair(7,1), 0) &&
                 !board.IsSquareAttacked(make_pair(7,2), 0) &&
                 !board.IsSquareAttacked(make_pair(7,3), 0) &&
                 !board.IsSquareAttacked(make_pair(7,4), 0)) {
@@ -214,7 +214,6 @@ public:
                 board.board[0][1] == Piece::None && 
                 board.board[0][2] == Piece::None && 
                 board.board[0][3] == Piece::None &&
-                !board.IsSquareAttacked(make_pair(0,1), 1) &&
                 !board.IsSquareAttacked(make_pair(0,2), 1) &&
                 !board.IsSquareAttacked(make_pair(0,3), 1) &&
                 !board.IsSquareAttacked(make_pair(0,4), 1)){
